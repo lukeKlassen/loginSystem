@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Scanner;
 import loginsystem.User;
 
@@ -218,7 +217,12 @@ public class MainFrame extends javax.swing.JFrame {
             //break from the method
             return;
         }
+        //store the information about the user with this name into user oject match
         User match = getUser(userNameField.getText());
+        if(match == null){
+            dialogueLabel.setText("That User Could Not be Found");
+            return;
+        }
         try{
             //If this user's encrypted password matches the given password when encrypted
             if(match.getPassword().equals( encrypt(new String(passwordField.getPassword())))){
@@ -236,7 +240,6 @@ public class MainFrame extends javax.swing.JFrame {
             //print out an error message
             dialogueLabel.setText("Error in Comparing Passwords");    
         }
-            
     }//GEN-LAST:event_loginBtnActionPerformed
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
@@ -397,6 +400,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     //checks whether the given string already exists as a username
     public boolean userNameIsTaken(String userName){
+        //return whether the user could be found
         return getUser(userName) != null;
     }
 
@@ -418,21 +422,32 @@ public class MainFrame extends javax.swing.JFrame {
         //return the hexadecimal string of the encypted password
         return readable;
     }
+    //returns the user from the file that has the same username as accountname
     public User getUser(String accountName){
+        //create a scanner
         Scanner f;
         try{
+            //attempt to intialize the scanner to the users file
             File users = new File("src/loginsystem/users.txt");
             f = new Scanner(users);
+        //catch any thrown IO exceptions
         }catch(IOException e){
+            //set the dialogue to show an error occured
             dialogueLabel.setText("Error In Reading File");
+            //break from the method
             return null;
         }
+        //while the file has more lines
         while(f.hasNextLine()){
+            //get the information about this user as a string array
             String[] data = f.nextLine().split(",");
+            //if the usernames match
             if(data[0].equals(accountName)){
+                //return the user made from this data
                 return new User(data[0],data[1],data[2],data[3]);
             }
         }
+        //if no user could be found, return null
         return null;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
