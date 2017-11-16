@@ -22,8 +22,7 @@ import loginsystem.User;
  */
 public class MainFrame extends javax.swing.JFrame {
     
-    //holds all information of all users from text file
-    private ArrayList<User> userList = new ArrayList();
+
     //the user who is currently logged in
     private User loggedIn;
     /**
@@ -219,24 +218,12 @@ public class MainFrame extends javax.swing.JFrame {
             //break from the method
             return;
         }
-        //update the users arraylist for access
-        updateUserList();
-        //holds the index of the user with the entered user name
-        int userIndex = 0;
-        //for every item in the userList
-        for(int i=0; i<userList.size();i++){
-            //if the user at this index has a matching user name
-            if(userList.get(i).getUserName().equals(userNameField.getText())){
-                //assign the index to this position
-                userIndex = i;
-            }
-        }
-        //try to test password matching
+        User match = getUser(userNameField.getText());
         try{
             //If this user's encrypted password matches the given password when encrypted
-            if(userList.get(userIndex).getPassword().equals( encrypt(new String(passwordField.getPassword())))){
+            if(match.getPassword().equals( encrypt(new String(passwordField.getPassword())))){
                 //log this user in
-                loggedIn = userList.get(userIndex);
+                loggedIn = match;
                 //give them a login message
                 dialogueLabel.setText("Welcome, " + loggedIn.getfName() + ", to the Matrix");
             //if the passwords do not match
@@ -410,43 +397,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     //checks whether the given string already exists as a username
     public boolean userNameIsTaken(String userName){
-        //update the list of users
-        updateUserList();
-        //for every user in the userList
-        for(int i=0; i<userList.size(); i++){
-            //if the user name at this index matches the given username
-            if(userList.get(i).getUserName().equals(userName)){
-                //the user name is already taken, return true
-                return true;
-            }
-        //otherwise, return false
-        }return false;
+        return getUser(userName) == null;
     }
-    //resets the userList to the info within the file
-    public void updateUserList(){
-        //create a scanner to read the file
-        Scanner f;
-        //try to
-        try{
-            //create a file object of the users.txt file
-            File users = new File("src/loginsystem/users.txt");
-            //set the scanner to use this file
-            f = new Scanner(users);
-        //catch errors in assigning the obejects
-        }catch(IOException e){
-            //break the method
-            return;
-        }
-        //clear the userList
-        userList.clear();
-        //while the file has more lines
-        while(f.hasNextLine()){
-            //create a string array from the information of this line
-            String[] thisUser = f.nextLine().split(",");
-            //add a user to the arrayList with the array's information
-            userList.add(new User(thisUser[0], thisUser[1], thisUser[2], thisUser[3]));
-        }
-    }
+
     //encrypts the password string, has potential to throw exception
     public String encrypt(String pass) throws NoSuchAlgorithmException{
         //create a message digest (encryptor) of algorithm type MD5
@@ -464,6 +417,23 @@ public class MainFrame extends javax.swing.JFrame {
         }
         //return the hexadecimal string of the encypted password
         return readable;
+    }
+    public User getUser(String accountName){
+        Scanner f;
+        try{
+            File users = new File("src/loginsystem/users.txt");
+            f = new Scanner(users);
+        }catch(IOException e){
+            dialogueLabel.setText("Error In Reading File");
+            return null;
+        }
+        while(f.hasNextLine()){
+            String[] data = f.nextLine().split(",");
+            if(data[0].equals(accountName)){
+                return new User(data[0],data[1],data[2],data[3]);
+            }
+        }
+        return null;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addUserBtn;
