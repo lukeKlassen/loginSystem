@@ -225,7 +225,7 @@ public class MainFrame extends javax.swing.JFrame {
                 //log this user in
                 loggedIn = match;
                 //give them a login message
-                dialogueLabel.setText("Welcome, " + loggedIn.getfName() + ", to the Matrix");
+                dialogueLabel.setText("Welcome, " + loggedIn.getfName() + " " + loggedIn.getlName() + ", to the Matrix");
             //if the passwords do not match
             }else{
                 //print that the information was incorrect
@@ -397,7 +397,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
     //checks whether the given string already exists as a username
     public boolean userNameIsTaken(String userName){
-        return getUser(userName) == null;
+        return getUser(userName) != null;
     }
 
     //encrypts the password string, has potential to throw exception
