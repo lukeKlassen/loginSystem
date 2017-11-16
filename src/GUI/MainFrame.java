@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import loginsystem.User;
+import org.passay.*;
 
 /**
  *
@@ -449,6 +451,17 @@ public class MainFrame extends javax.swing.JFrame {
         }
         //if no user could be found, return null
         return null;
+    }
+    public boolean passayCheckPass(String pass){
+        IllegalCharacterRule commas = new IllegalCharacterRule(new char[]{','});
+        LengthRule sixCharacters = new LengthRule(6);
+        
+        ArrayList<Rule> rules = new ArrayList<>();
+        rules.add(commas);
+        rules.add(sixCharacters);
+        PasswordData data = new PasswordData(pass);
+        PasswordValidator validater = new PasswordValidator(rules);
+        return validater.validate(data).isValid();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addUserBtn;
