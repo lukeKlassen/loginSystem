@@ -365,7 +365,7 @@ public class MainFrame extends javax.swing.JFrame {
             //return that the user already exists
             return "This user Already Exists";
         //otherwise, if the password is weak
-        }else if(!isGoodPass(password)){
+        }else if(!passayCheckPass(password)){
             //tell them their password sucks
             return "That Password is Weaksauce";
         //otherwise
@@ -454,11 +454,14 @@ public class MainFrame extends javax.swing.JFrame {
     }
     public boolean passayCheckPass(String pass){
         IllegalCharacterRule commas = new IllegalCharacterRule(new char[]{','});
-        LengthRule sixCharacters = new LengthRule(6);
-        
+        LengthRule sixCharacters = new LengthRule(6,31);
+        CharacterRule upperCase = new CharacterRule(EnglishCharacterData.Alphabetical);
+        CharacterRule number = new CharacterRule(EnglishCharacterData.Digit);
         ArrayList<Rule> rules = new ArrayList<>();
         rules.add(commas);
         rules.add(sixCharacters);
+        rules.add(upperCase);
+        rules.add(number);
         PasswordData data = new PasswordData(pass);
         PasswordValidator validater = new PasswordValidator(rules);
         return validater.validate(data).isValid();
